@@ -8,7 +8,7 @@ interface BlockProps extends React.ComponentProps<typeof BlankWrapper>{
 
 const BlankWrapper = styled.div`
   background: #D9D9D9;
-  border-radius: 2px;
+  border-radius: 4px;
   align-items: center;
   display: flex;
   height: 100%;

@@ -1,7 +1,6 @@
 import styled, {css} from "styled-components";
-import {GreenButtonStyles} from "./greenButtonStyles.tsx";
-import {DefaultButtonStyles} from "./defaultButtonStyles.tsx";
-import {RedButtonStyles} from "./redButtonStyles.tsx";
+import {Link} from "react-router-dom";
+import {ButtonProps, ButtonStyles} from "./buttonStyles.tsx";
 
 const centerStyles = css`
   display: flex;
@@ -20,29 +19,16 @@ export const Block = styled.div`
   flex-direction: row;
 `
 
-type ButtonProps = {
-  scale : 1 | 2 | 3,
-  color?: 'green' | 'red'
-}
+
 
 export const Button = styled.button<ButtonProps>`
-  font-size: ${({ scale }) => 16 + 2 * scale + 'px'};
-  text-align: center;
-  border: none;
-  padding: ${({ scale }) => 8 + 4 * scale + 'px'};
-  border-radius: 2px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  ${({color}) => {
-    if (color === 'green') {
-      return GreenButtonStyles;
-    }
-    if (color === 'red') {
-      return RedButtonStyles;
-    }
-    
-    return DefaultButtonStyles
-  }}
+  ${ButtonStyles}
+`
+
+
+export const ButtonLink = styled(Link)<ButtonProps>`
+  text-decoration: none;
+  ${ButtonStyles};
 `
 
 export const Form = styled.form`
@@ -59,7 +45,7 @@ export const Label = styled.label`
 `
 export const Input = styled.input`
   border: #D9D9D9 solid 2px;
-  border-radius: 2px;
+  border-radius: 4px;
   font-size: 18px;
   color: #2c2c2c;
 
@@ -92,10 +78,13 @@ export const Exit = styled.a`
   right: 0;
   cursor: pointer;
 `
-export const CenterContainerStyled = styled.div`
+export const CenterContainer = styled.div`
   ${centerStyles};
 `
-export const ImageStyled = styled(CenterContainerStyled)`
+
+
+
+export const ImageStyled = styled(CenterContainer)`
   margin-left: 8px;
   cursor: pointer;
 `
@@ -103,4 +92,30 @@ export const NavStyled = styled.nav`
   ${centerStyles};
   margin-top: 22px;
   position: relative;
+`
+
+export const Column = styled.div`
+  flex-direction: column;
+  display: flex;
+`
+
+export const RoomsScroll = styled(Column)`
+  overflow-y: scroll;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  padding: 8px;
+`
+
+export const Row = styled.div`
+  display: flex;
+  margin-top: 8px;
+  gap: 8px;
+  width: 100%;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+`
+
+export const CenterColumn = styled(Column)`
+  ${centerStyles};
 `

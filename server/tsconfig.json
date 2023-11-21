@@ -1,20 +1,17 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "incremental": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
     "declaration": true,
     "strict": true,
-    "moduleResolution": "nodenext",
+    "incremental": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "rootDir": "./src",
+    "outDir": "./build",
+    "composite": true
   },
-  "references": [
-    {
-      "path": "./client"
-    },
-    {
-      "path": "./server"
-    }
-  ]
+
 }

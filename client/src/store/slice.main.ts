@@ -4,7 +4,7 @@ import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 const name = 'main';
 
 export type PlayerType = {
-    name: string,
+    name: string | undefined,
     rating?: number,
     password?: string,
 }
@@ -17,24 +17,25 @@ export type MainInitialState = {
 }
 
 export const mainInitialState: MainInitialState = {
-    auth: false,
+    auth: true,
     loading: false,
     player: {
-        name: '',
+        name: undefined,
         rating: 0
     }
 }
 
-const sleep = (time: number) => {
-    return new Promise(resolve => {
-        setTimeout(resolve, time)
-    })
-}
+// const sleep = (time: number) => {
+//     return new Promise(resolve => {
+//         setTimeout(resolve, time)
+//     })
+// }
 
-const authorize = createAsyncThunk('authorize',
-    async (args: PlayerType, { rejectWithValue }) => {
+export const authorize = createAsyncThunk(
+    `${name}/authorize`,
+    async (_, { rejectWithValue, getState }) => {
     try {
-        const { name, password } = args;
+        const { name, password } = (getState() as MainInitialState).player;
 
         if (!name) {
             throw new Error('NAME_EMPTY')
@@ -48,7 +49,7 @@ const authorize = createAsyncThunk('authorize',
             throw new Error('PLAYER_NOT_VALID')
         }
 
-        await sleep(3000);
+        // await sleep(3000);
 
         return { name, password, points: 0 };
     } catch (error) {
@@ -66,6 +67,7 @@ const slice = createSlice({
         },
         updateAuth(state, { payload }) {
             state.auth = payload.auth;
+            state.player = mainInitialState.player
         }
     },
     extraReducers(builder) {
@@ -79,6 +81,7 @@ const slice = createSlice({
                 state.loading  = false;
                 state.player  = payload;
                 state.error = null;
+                state.auth = true;
             })
         builder.addCase(authorize.rejected, (state, { error }) => {
             state.loading  = false;
