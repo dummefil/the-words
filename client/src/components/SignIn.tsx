@@ -6,7 +6,7 @@ import {useAppDispatch, useAppSelector} from "../hooks.ts";
 
 export const SignIn = () => {
     const dispatch = useAppDispatch();
-    const { user, loading, error } = useAppSelector((state) => state.player);
+    const { user, loading } = useAppSelector((state) => state.player);
     const [playerUsername, setPlayerUsername  ] = useState(user.username);
     const [playerPassword, setPlayerPassword] = useState(user.password);
 
@@ -31,7 +31,6 @@ export const SignIn = () => {
                 <Input type="password" placeholder="Введите пароль" onInput={onChangeNamePassword}/>
                 <Button scale={2} disabled={buttonDisabled}>{ loading ? 'Ожидайте...' : 'Войти' }</Button>
             </Form>
-            { error && <div>{error.message}</div> }
         </>
     )
 }

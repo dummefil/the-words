@@ -62,15 +62,16 @@ export const socketMiddleware: Middleware<
                 dispatch(updateLoading(false))
             });
 
-            socket.on('message', () => {})
-            socket.on('close', (error) => {
-                console.error(error)
-            })
+            // socket.on('message', () => {})
+            // socket.on('close', (error) => {
+            //     console.error(error)
+            // })
 
 
             socket.on("connect_error", (error) => {
                 console.error(error)
                 dispatch(setError(error))
+                dispatch(updateLoading(false))
             });
             break
 
