@@ -1,94 +1,51 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 
 const name = 'main';
 
-export type PlayerType = {
-    name: string | undefined,
-    rating?: number,
-    password?: string,
+export type UserType = {
+    username: string | undefined
+    rating?: number
+    password?: string
 }
 
 export type MainInitialState = {
-    auth: boolean,
-    loading: boolean,
-    player: PlayerType
+    auth: boolean
+    loading: boolean
+    user: UserType
     error?: Error | null
 }
 
 export const mainInitialState: MainInitialState = {
-    auth: true,
+    auth: false,
     loading: false,
-    player: {
-        name: undefined,
+    user: {
+        username: undefined,
         rating: 0
     }
 }
 
-// const sleep = (time: number) => {
-//     return new Promise(resolve => {
-//         setTimeout(resolve, time)
-//     })
-// }
-
-export const authorize = createAsyncThunk(
-    `${name}/authorize`,
-    async (_, { rejectWithValue, getState }) => {
-    try {
-        const { name, password } = (getState() as MainInitialState).player;
-
-        if (!name) {
-            throw new Error('NAME_EMPTY')
-        }
-
-        if (!password) {
-            throw new Error('PASSWORD_EMPTY')
-        }
-
-        if (!password && !name) {
-            throw new Error('PLAYER_NOT_VALID')
-        }
-
-        // await sleep(3000);
-
-        return { name, password, points: 0 };
-    } catch (error) {
-        return rejectWithValue(error);
-    }
-
-    })
 
 const slice = createSlice({
     name,
     initialState: mainInitialState,
     reducers: {
-        updatePlayer(state, { payload }: { payload: PlayerType }) {
-            state.player = { ...state.player, ...payload }
+        updatePlayer(state, { payload }: { payload: UserType }) {
+            state.user = { ...state.user, ...payload }
         },
         updateAuth(state, { payload }) {
             state.auth = payload.auth;
-            state.player = mainInitialState.player
+            state.user = mainInitialState.user
+        },
+        updateLoading(state, {payload} ) {
+          state.loading = payload;
+        },
+        setError(state, { payload }) {
+            state.error = payload;
         }
     },
-    extraReducers(builder) {
-        builder.addCase(authorize.pending,
-            (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-        builder.addCase(authorize.fulfilled,
-            (state, {payload}) => {
-                state.loading  = false;
-                state.player  = payload;
-                state.error = null;
-                state.auth = true;
-            })
-        builder.addCase(authorize.rejected, (state, { error }) => {
-            state.loading  = false;
-            state.error = error as Error;
-        })
-    }
 })
 
-export const { updatePlayer, updateAuth } = slice.actions
+export const { updatePlayer, updateAuth, updateLoading, setError } = slice.actions
+
 export default slice.reducer

@@ -3,15 +3,14 @@
   "version": "0.0.0",
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "fastify": "^4.24.3",
-    "fastify-socket.io": "^5.0.0",
     "pino": "^8.16.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
-    "pino-pretty": "^10.2.3"
+    "pino-pretty": "^10.2.3",
+    "socket.io": "^4.7.2"
   },
   "scripts": {
-    "start": "bun src/index.ts"
+    "start": "NODE_ENV=development bun --watch src/index.ts"
   }
 }

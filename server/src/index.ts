@@ -1,56 +1,44 @@
-import Fastify from 'fastify';
-import SocketIO from 'fastify-socket.io';
-import {logger, config} from './logger';
-import bcrypt from 'bcrypt'
+import { Server } from 'socket.io';
+import {logger} from './logger';
 
-interface IQuerystring {
-    username: string;
-    password: string;
-}
-
-interface IHeaders {
-    'h-Custom': string;
-}
-
-interface IReply {
-    200: { success: boolean };
-    302: { url: string };
-    '4xx': { error: string };
-}
-
-const fastify = Fastify({
-    logger: config ?? true
+const io = new Server( {
+    serveClient: false,
+    cors: {
+        origin: '*',
+        // credentials: true
+    },
+    connectionStateRecovery: {
+        // the backup duration of the sessions and the packets
+        maxDisconnectionDuration: 2 * 60 * 1000,
+        // whether to skip middlewares upon successful recovery
+        skipMiddlewares: true,
+    }
 });
 
-fastify.register(SocketIO, {
-    // put your options here
+io.use(async (socket, next) => {
+    const base64 = socket.handshake.auth.token;
+    const token = base64ToString(base64);
+    const [username, password] = token.split(':');
+    logger.info(username, password);
+    if (username === 'dima' && password === 'password') {
+        return next();
+    }
+    logger.error(`INVALID_USER: ${token}`)
+    next(new Error("INVALID_USER"));
 });
 
-fastify.get<{
-    Querystring: IQuerystring,
-    Headers: IHeaders,
-    Reply: IReply
-}>('/authorize',
-    // {
-    //     preValidation: (request, reply, done) => {
-    //         const {username, password} = request.query
-    //         done(username !== 'admin' ? new Error('Must be admin') : undefined) // only validate `admin` account
-    //     }
-    // },
-    async (request, reply) => {
-    //tood
-    const { username, password } = request.query;
-    const saltRounds = 10
-    const hashPassword = await bcrypt.hash(password, saltRounds);
+io.on("connection", socket => {
+    logger.info(`connect ${socket.id}`);
 
-    logger.info(username, password, hashPassword, await bcrypt.compare(password, hashPassword));
-    reply.code(200).send({ success: true });
-})
-
-fastify.get("/", (req, reply) => {
-    fastify.io.emit("hello");
+    socket.on("disconnect", (reason) => {
+        logger.info(`disconnect ${socket.id} due to ${reason}`);
+    });
 });
 
-fastify.listen({ port: 3000 }).catch((error: Error) => {
-    logger.error(error);
-})
+const base64ToString = (string: string) => Buffer.from(string, 'base64').toString('ascii')
+
+
+
+const port = 3000;
+logger.info(`Socket IO started on ${port}`);
+io.listen(3000);

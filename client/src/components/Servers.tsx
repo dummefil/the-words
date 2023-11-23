@@ -2,9 +2,8 @@ import Blank from "./Blank.tsx";
 import styled, {css} from "styled-components";
 import {Button, ButtonLink, CenterColumn, Column, Input, RoomsScroll, Row} from "./index.tsx";
 import {Navigate, Route, Routes} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {Checkbox} from "./Checkbox.tsx";
-import {useDispatch} from "react-redux";
 
 type ServerDescriptionProps = {
     selected: boolean,
@@ -29,13 +28,6 @@ const ServerDescription = styled.div<ServerDescriptionProps>`
 `
 
 const Rooms = () => {
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch({type: 'socket/connect'})
-        return () => {
-            dispatch({type: 'socket/disconnect'})
-        }
-    })
 
     const [selectedIndex, setSelectedIndex] = useState<number>();
 

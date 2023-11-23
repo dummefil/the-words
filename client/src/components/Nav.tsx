@@ -1,11 +1,13 @@
-import {useDispatch, useSelector} from "react-redux";
-import {MainInitialState, updateAuth} from "../store/slice.main.ts";
+import { updateAuth} from "../store/slice.main.ts";
 import {Block, Exit, Header, ImageStyled, NavStyled} from "./index.tsx";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import ruFlag from "../assets/flag_ru.svg";
+import {useAppDispatch, useAppSelector} from "../hooks.ts";
 
 export const Nav = () => {
-    const dispatch = useDispatch()
-    const auth = useSelector((state: MainInitialState) => state.auth);
+    const dispatch = useAppDispatch()
+    const auth = useAppSelector((state) => state.player.auth);
     return (
         <NavStyled>
             <Block>
