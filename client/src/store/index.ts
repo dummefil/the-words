@@ -1,8 +1,16 @@
 import {combineReducers, configureStore} from "@reduxjs/toolkit";
 
-import mainReducer from "./slice.main.ts";
+import playerReducer from "./slice.player.ts";
+import serverReducer from "./slice.server.ts";
+import systemReducer from "./slice.system.ts";
 import {socketMiddleware} from "./socketMiddleware.tsx";
-const rootReducer = combineReducers({ player: mainReducer })
+const rootReducer = combineReducers(
+    {
+        player: playerReducer,
+        server: serverReducer,
+        system: systemReducer,
+    }
+)
 const store = configureStore({
     reducer: rootReducer,
     middleware: getDefaultMiddleware =>

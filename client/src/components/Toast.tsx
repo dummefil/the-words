@@ -1,6 +1,6 @@
 import styled, {css, keyframes} from "styled-components";
 import {useCallback, useEffect, useState} from "react";
-import {setError} from "../store/slice.main";
+import {setError} from "../store/slice.system.ts";
 import {useAppDispatch} from "../hooks";
 
 
@@ -51,8 +51,8 @@ const getPosition = (string = 'bottom') => {
 }
 
 type ToastProps = {
-    data?: Error | any
-    show: boolean;
+    data?: Error | never
+    show?: boolean;
     type: 'error' | 'warn' | 'success' | 'plain'
     position: 'bottom left' | 'bottom right' | 'top right' | 'top left' | 'bottom center' | 'top center'
 }
@@ -93,8 +93,10 @@ const Toast = ({ position, data, type = 'plain' }: ToastProps) => {
 
 
     useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         setLocalData(data);
-        const timeoutId = setTimeout(timeoutFunction, 3000); // 3000 ms = 3 seconds
+        const timeoutId = setTimeout(timeoutFunction, 3000);
         return () => clearTimeout(timeoutId);
     }, [data, timeoutFunction]);
 

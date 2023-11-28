@@ -1,7 +1,10 @@
 import {io, Socket} from "socket.io-client";
-import {setError, updateAuth, updateLoading} from "./slice.main.ts";
+import {setError, updateAuth, updateLoading} from "./slice.system.ts";
 import {RootState} from "./index.ts";
 import {Middleware} from "@reduxjs/toolkit";
+import {SERVERS_CONNECT, SERVERS_LOAD} from "../../../events.ts";
+import {updateCurrentServer, updateServers} from "./slice.server.ts";
+import {serverConnect, socketConnect, socketDisconnect} from "./actions.ts";
 
 interface ClientToServerEvents {
     open: () => void;
@@ -31,7 +34,7 @@ let socket: Socket<ClientToServerEvents, ServerToClientEvents> | undefined;
 // @ts-expect-error
 const buildToken = (getState) => {
     const {player} = getState();
-    const { username, password } = player.user;
+    const { username, password } = player;
     return btoa(username + ':' + password);
 }
 
@@ -41,10 +44,10 @@ export const socketMiddleware: Middleware<
 > =  (storeApi) => (next) => (action) => {
     const { dispatch, getState } = storeApi
 
-    const { type } = action
+    const { type, payload } = action
 
     switch (type) {
-        case 'socket/connect':
+        case socketConnect.type:
             dispatch(updateLoading(true))
             socket = io('127.0.0.1:3000', {
                 reconnection: true,
@@ -55,27 +58,36 @@ export const socketMiddleware: Middleware<
                 }
             });
             socket.on("connect", () => {
-                console.log(socket?.id); // x8WIv7-mJelg7on_ALbx
+                // console.log(socket?.id); // x8WIv7-mJelg7on_ALbx
                 console.info('connected to socket')
-                socket?.emit('get/servers')
-                dispatch(updateAuth({ auth: true }))
-                dispatch(updateLoading(false))
             });
 
-            // socket.on('message', () => {})
-            // socket.on('close', (error) => {
-            //     console.error(error)
-            // })
-
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            socket?.on(SERVERS_LOAD, (list) => {
+                dispatch(updateServers(list));
+                dispatch(updateAuth({ auth: true }))
+                dispatch(updateLoading(false))
+            })
 
             socket.on("connect_error", (error) => {
                 console.error(error)
                 dispatch(setError(error))
                 dispatch(updateLoading(false))
+                socket?.disconnect()
             });
             break
 
-        case 'socket/disconnect':
+        case serverConnect.type:
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            // todo be sure serverData is not a number
+            socket?.emit(SERVERS_CONNECT, payload.id, (serverData) => {
+                dispatch(updateCurrentServer(serverData))
+            })
+            break
+
+        case socketDisconnect.type:
             socket?.disconnect()
             break
 

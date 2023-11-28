@@ -7,7 +7,7 @@ import {useAppSelector} from "./hooks.ts";
 import Toast from "./components/Toast.tsx";
 
 function App() {
-    const {auth, error} = useAppSelector((state) => state.player);
+    const {auth, error} = useAppSelector((state) => state.system);
     return (
     <Container>
         <Nav/>

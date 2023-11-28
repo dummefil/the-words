@@ -1,6 +1,6 @@
 import styled, {css} from "styled-components";
 import {Link} from "react-router-dom";
-import {ButtonProps, ButtonStyles} from "./buttonStyles.tsx";
+import {ButtonProps, ButtonStyles} from "../styles/buttonStyles.tsx";
 
 const centerStyles = css`
   display: flex;
@@ -19,12 +19,9 @@ export const Block = styled.div`
   flex-direction: row;
 `
 
-
-
 export const Button = styled.button<ButtonProps>`
   ${ButtonStyles}
 `
-
 
 export const ButtonLink = styled(Link)<ButtonProps>`
   text-decoration: none;
@@ -34,11 +31,12 @@ export const ButtonLink = styled(Link)<ButtonProps>`
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 16px;
   margin-top: auto;
   height: 100%;
-  justify-content: center;
+  justify-content: end;
 `
+
 export const Label = styled.label`
   margin-left: 8px;
   font-size: 16px;

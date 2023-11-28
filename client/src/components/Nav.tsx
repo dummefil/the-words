@@ -1,4 +1,4 @@
-import { updateAuth} from "../store/slice.main.ts";
+import { updateAuth} from "../store/slice.system.ts";
 import {Block, Exit, Header, ImageStyled, NavStyled} from "./index.tsx";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -7,7 +7,7 @@ import {useAppDispatch, useAppSelector} from "../hooks.ts";
 
 export const Nav = () => {
     const dispatch = useAppDispatch()
-    const auth = useAppSelector((state) => state.player.auth);
+    const auth = useAppSelector((state) => state.system.auth);
     return (
         <NavStyled>
             <Block>

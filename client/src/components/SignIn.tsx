@@ -1,27 +1,28 @@
-import { updatePlayer,} from "../store/slice.main.ts";
+import { updatePlayer,} from "../store/slice.player.ts";
 import {Button, Form, Input} from "./index.tsx";
-import React, {useState} from "react";
+import {ChangeEvent, FormEvent, useState} from "react";
 import {Checkbox} from "./Checkbox.tsx";
 import {useAppDispatch, useAppSelector} from "../hooks.ts";
 
 export const SignIn = () => {
     const dispatch = useAppDispatch();
-    const { user, loading } = useAppSelector((state) => state.player);
-    const [playerUsername, setPlayerUsername  ] = useState(user.username);
-    const [playerPassword, setPlayerPassword] = useState(user.password);
+    const username = useAppSelector((state) => state.player.username);
+    const loading = useAppSelector((state) => state.system.loading);
+    const [_username, _setUsername  ] = useState(username);
+    const [_password, _setPassword] = useState<string>();
 
-    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (playerUsername && playerPassword) {
-            dispatch(updatePlayer({ username: playerUsername, password: playerPassword }))
+        if (_username && _password) {
+            dispatch(updatePlayer({ username: _username, password: _password }))
             dispatch({type: 'socket/connect' })
         }
     }
 
-    const onChangeNameChange = ({target}: React.ChangeEvent<HTMLInputElement>) => setPlayerUsername(target.value)
-    const onChangeNamePassword = ({target}: React.ChangeEvent<HTMLInputElement>) => setPlayerPassword(target.value)
+    const onChangeNameChange = ({target}: ChangeEvent<HTMLInputElement>) => _setUsername(target.value)
+    const onChangeNamePassword = ({target}: ChangeEvent<HTMLInputElement>) => _setPassword(target.value)
 
-    const buttonDisabled = Boolean((!playerUsername || !playerPassword) || ( playerUsername && playerPassword && loading ));
+    const buttonDisabled = Boolean((!_username || !_password) || ( _username && _password && loading ));
 
     return (
         <>

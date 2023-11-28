@@ -5,7 +5,7 @@ import {Provider} from "react-redux";
 import store from "./store";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 
-const root = document.getElementById('root');
+const root = ReactDOM.createRoot(document.getElementById('root')!)
 
 const router = createBrowserRouter([
     {
@@ -16,7 +16,7 @@ const router = createBrowserRouter([
 
 export const AppRouter = () => <RouterProvider router={router} />
 
-ReactDOM.createRoot(root!).render(
+root.render(
   <React.StrictMode>
       <Provider store={store}>
           <AppRouter />

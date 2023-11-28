@@ -1,13 +1,16 @@
 import Blank from "./Blank.tsx";
 import styled, {css} from "styled-components";
 import {Button, ButtonLink, CenterColumn, Column, Input, RoomsScroll, Row} from "./index.tsx";
-import {Navigate, Route, Routes} from "react-router-dom";
+import {Navigate, redirect, Route, Routes} from "react-router-dom";
 import {useState} from "react";
 import {Checkbox} from "./Checkbox.tsx";
+import {useAppDispatch, useAppSelector} from "../hooks.ts";
+import {serverConnect} from "../store/actions.ts";
 
 type ServerDescriptionProps = {
     selected: boolean,
 }
+
 const ServerDescription = styled.div<ServerDescriptionProps>`
   cursor: pointer;
   width: 100%;
@@ -28,39 +31,23 @@ const ServerDescription = styled.div<ServerDescriptionProps>`
 `
 
 const Rooms = () => {
-
+    const dispatch = useAppDispatch();
+    const servers = useAppSelector((state) => state.server.list )
     const [selectedIndex, setSelectedIndex] = useState<number>();
 
-    const servers = [
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-        { mode: 'text', name: 'server', lang: 'ru' },
-    ]
+    const onButtonClick = () => {
+        const server = servers![selectedIndex!];
+        dispatch(serverConnect(server));
+        redirect('/create')
+    }
 
     return <>
         <Blank header={'Комнаты'}>
         <RoomsScroll>
-            {servers.map((server, i) => {
+            {servers?.map((server, i) => {
                     const selected = i === selectedIndex;
-                    const key = server.name + i;
-                    const name = server.name + ' ' + i;
+                    const key = server.name;
+                    const name = server.name;
                     const onClick = () => setSelectedIndex(i);
                     return <ServerDescription selected={selected} onClick={onClick} key={key}>{name}</ServerDescription>
                 })
@@ -68,7 +55,7 @@ const Rooms = () => {
         </RoomsScroll>
         </Blank>
         <Row>
-            <Button scale={1} color={'green'}>
+            <Button disabled={selectedIndex === undefined}  scale={1}  color={'green'} onClick={() => onButtonClick()}>
                 Подключиться
             </Button>
             <ButtonLink to={'/create'} scale={1} color={'green'}>
