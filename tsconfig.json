@@ -1,20 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es2022",
+    "target": "ESNext",
     "incremental": true,
     "declaration": true,
     "strict": true,
-    "moduleResolution": "nodenext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "composite": true,
+    "removeComments": true
   },
-  "references": [
-    {
-      "path": "./client"
-    },
-    {
-      "path": "./server"
-    }
+  "include": [
+    "./types"
   ]
 }

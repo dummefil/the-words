@@ -4,10 +4,17 @@ import {Block, Exit, Header, ImageStyled, NavStyled} from "./index.tsx";
 // @ts-expect-error
 import ruFlag from "../assets/flag_ru.svg";
 import {useAppDispatch, useAppSelector} from "../hooks.ts";
+import {socketDisconnect} from "../store/actions.ts";
 
 export const Nav = () => {
     const dispatch = useAppDispatch()
-    const auth = useAppSelector((state) => state.system.auth);
+    const auth : boolean= useAppSelector((state) => state.system.auth);
+
+    const exitOnClick = () => {
+        dispatch(updateAuth({auth: false}));
+        dispatch(socketDisconnect())
+    }
+
     return (
         <NavStyled>
             <Block>
@@ -16,7 +23,7 @@ export const Nav = () => {
                     <img src={ruFlag} alt="flag"/>
                 </ImageStyled>
             </Block>
-            {auth as boolean && <Exit onClick={() => dispatch(updateAuth({auth: false}))}>Exit</Exit>}
+            {auth && <Exit onClick={exitOnClick}>Exit</Exit>}
         </NavStyled>
     )
 }

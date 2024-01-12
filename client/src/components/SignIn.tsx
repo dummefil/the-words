@@ -3,6 +3,7 @@ import {Button, Form, Input} from "./index.tsx";
 import {ChangeEvent, FormEvent, useState} from "react";
 import {Checkbox} from "./Checkbox.tsx";
 import {useAppDispatch, useAppSelector} from "../hooks.ts";
+import {SOCKET} from "../../../types/events.d.ts";
 
 export const SignIn = () => {
     const dispatch = useAppDispatch();
@@ -14,13 +15,13 @@ export const SignIn = () => {
     const onSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (_username && _password) {
-            dispatch(updatePlayer({ username: _username, password: _password }))
-            dispatch({type: 'socket/connect' })
+            dispatch(updatePlayer({ username: _username, password: _password }));
+            dispatch({type: SOCKET.CONNECTION });
         }
     }
 
-    const onChangeNameChange = ({target}: ChangeEvent<HTMLInputElement>) => _setUsername(target.value)
-    const onChangeNamePassword = ({target}: ChangeEvent<HTMLInputElement>) => _setPassword(target.value)
+    const onChangeNameChange = ({target}: ChangeEvent<HTMLInputElement>) => _setUsername(target.value);
+    const onChangeNamePassword = ({target}: ChangeEvent<HTMLInputElement>) => _setPassword(target.value);
 
     const buttonDisabled = Boolean((!_username || !_password) || ( _username && _password && loading ));
 

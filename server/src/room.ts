@@ -1,13 +1,15 @@
 import {UUID} from "crypto";
-import {Player} from "./player";
 
-export class Room {
-    id: UUID
-    players: (keyof typeof Player)[]
-
-    constructor(id: UUID) {
-        this.id = id
-        this.players = []
+export class Room extends RoomType {
+    constructor(id: UUID, name: string) {
+        super();
+        this.id = id;
+        this.name = name;
+        this.players = [];
+        this.state = ROOM_STATE.ANSWER;
+        this.moveIndex = 0;
+        this.history = [];
+        this.lang = ROOM_LANGUAGES.RU;
     }
 
     join(playerId: UUID) {
@@ -16,7 +18,6 @@ export class Room {
 
     leave(playerId: UUID) {
         const playerIndex = this.players.indexOf(playerId);
-
-
+        this.players = this.players.slice(playerIndex, 1);
     }
 }

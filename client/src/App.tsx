@@ -2,7 +2,7 @@ import './reset.css';
 import {Container} from "./components";
 import {SignIn} from "./components/SignIn.tsx";
 import {Nav} from "./components/Nav.tsx";
-import {ServersRouter} from "./components/Servers.tsx";
+import {ServersRouter} from "./components/Rooms.tsx";
 import {useAppSelector} from "./hooks.ts";
 import Toast from "./components/Toast.tsx";
 

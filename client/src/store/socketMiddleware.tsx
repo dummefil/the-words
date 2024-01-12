@@ -1,22 +1,21 @@
 import {io, Socket} from "socket.io-client";
-import {setError, updateAuth, updateLoading} from "./slice.system.ts";
-import {RootState} from "./index.ts";
+import {setError, updateAuth, updateLoading} from "./slice.system";
+import {RootState} from "./";
 import {Middleware} from "@reduxjs/toolkit";
-import {SERVERS_CONNECT, SERVERS_LOAD} from "../../../events.ts";
-import {updateCurrentServer, updateServers} from "./slice.server.ts";
-import {serverConnect, socketConnect, socketDisconnect} from "./actions.ts";
+import {updateCurrentRoom, updateRooms} from "./slice.room";
+import {serverConnect, socketConnection, socketDisconnect} from "./actions";
 
-interface ClientToServerEvents {
-    open: () => void;
-    message: (data: never) => void;
-    close: (error: Error) => void;
-}
-
-interface ServerToClientEvents {
-    'get/servers': () => void;
-    basicEmit: (a: number, b: string, c: Blob) => void;
-    withAck: (d: string, callback: (e: number) => void) => void;
-}
+// interface ClientToServerEvents {
+//     open: () => void;
+//     message: (data: never) => void;
+//     close: (error: Error) => void;
+// }
+//
+// interface ServerToClientEvents {
+//     'get/servers': () => void;
+//     basicEmit: (a: number, b: string, c: Blob) => void;
+//     withAck: (d: string, callback: (e: number) => void) => void;
+// }
 
 // interface InterServerEvents {
 //     ping: () => void;
@@ -27,14 +26,11 @@ interface ServerToClientEvents {
 //     age: number;
 // }
 
-let socket: Socket<ClientToServerEvents, ServerToClientEvents> | undefined;
+let socket: Socket;
 
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-const buildToken = (getState) => {
-    const {player} = getState();
-    const { username, password } = player;
+const buildToken = (getState: () => RootState) => {
+    const {auth} = getState();
+    const { username, password } = auth;
     return btoa(username + ':' + password);
 }
 
@@ -47,30 +43,29 @@ export const socketMiddleware: Middleware<
     const { type, payload } = action
 
     switch (type) {
-        case socketConnect.type:
+        case socketConnection.type:
             dispatch(updateLoading(true))
             socket = io('127.0.0.1:3000', {
                 reconnection: true,
-                reconnectionDelay: 10000, // defaults to 1000
-                reconnectionDelayMax: 10000, // defaults to 5000
+                reconnectionDelay: 10000,
+                reconnectionDelayMax: 10000,
                 auth: {
                     token: buildToken(getState)
                 }
             });
-            socket.on("connect", () => {
+            socket.on(SOCKET.CONNECTION, (room) => {
                 // console.log(socket?.id); // x8WIv7-mJelg7on_ALbx
-                console.info('connected to socket')
+                console.log(room);
+                console.info('connected to socket');
             });
 
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            socket?.on(SERVERS_LOAD, (list) => {
-                dispatch(updateServers(list));
+            socket.on(SOCKET_SERVER.LOAD, (rooms) => {
+                dispatch(updateRooms(rooms));
                 dispatch(updateAuth({ auth: true }))
                 dispatch(updateLoading(false))
             })
 
-            socket.on("connect_error", (error) => {
+            socket.on(SOCKET.CONNECT_ERROR, (error) => {
                 console.error(error)
                 dispatch(setError(error))
                 dispatch(updateLoading(false))
@@ -79,11 +74,8 @@ export const socketMiddleware: Middleware<
             break
 
         case serverConnect.type:
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            // todo be sure serverData is not a number
-            socket?.emit(SERVERS_CONNECT, payload.id, (serverData) => {
-                dispatch(updateCurrentServer(serverData))
+            socket?.emit(SOCKET_SERVER.CONNECT, payload.id, (serverData: never) => {
+                dispatch(updateCurrentRoom(serverData))
             })
             break
 
